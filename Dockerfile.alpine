@@ -2,9 +2,7 @@ FROM alpine
 
 ENV TZ=Asia/Shanghai
 
-RUN apk add --no-cache alpine-conf ca-certificates curl && \
-    /usr/sbin/setup-timezone -z Asia/Shanghai && \
-    apk del alpine-conf && \
+RUN apk add --no-cache tzdata ca-certificates curl && \
     rm -rf /var/cache/apk/* &&\
     mkdir -p /app
 

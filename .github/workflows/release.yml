@@ -12,6 +12,15 @@ permissions:
 jobs:
   releaser:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - platform: linux/amd64
+            arch: amd64_v1
+          - platform: linux/arm64
+            arch: arm64_v8.0
+          - platform: linux/arm/v7
+            arch: arm_7
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -31,12 +40,6 @@ jobs:
           args: release --clean
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-  docker:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
         
       - name: Docker meta
         id: meta
@@ -45,6 +48,9 @@ jobs:
           images: |
             ghcr.io/${{ github.repository }}
             ${{ secrets.DOCKERHUB_USERNAME }}/${{ github.event.repository.name }}
+          tags: |
+            type=ref,event=tag
+            type=raw,value=alpine,suffix=-alpine
           
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
@@ -65,11 +71,25 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
           
-      - name: Build and push
+      - name: Build and push (Debian)
         uses: docker/build-push-action@v5
         with:
           context: .
           push: true
-          platforms: linux/amd64,linux/arm64,linux/arm/v7
+          platforms: ${{ matrix.platform }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          build-args: |
+            TARGET_ARCH=${{ matrix.arch }}
+
+      - name: Build and push (Alpine)
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: Dockerfile.alpine
+          push: true
+          platforms: ${{ matrix.platform }}
+          tags: ${{ steps.meta.outputs.tags }}-alpine
+          labels: ${{ steps.meta.outputs.labels }}
+          build-args: |
+            TARGET_ARCH=${{ matrix.arch }}

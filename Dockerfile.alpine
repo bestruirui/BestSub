@@ -1,0 +1,15 @@
+FROM alpine
+
+ENV TZ=Asia/Shanghai
+
+RUN apk add --no-cache alpine-conf ca-certificates curl && \
+    /usr/sbin/setup-timezone -z Asia/Shanghai && \
+    apk del alpine-conf && \
+    rm -rf /var/cache/apk/* &&\
+    mkdir -p /app
+
+ARG TARGET_ARCH
+
+COPY dist/BestSub_linux_${TARGET_ARCH}/BestSub /app/BestSub
+
+CMD /app/BestSub

@@ -42,6 +42,7 @@ func taskGetProxies(args interface{}) (interface{}, error) {
 	subUrl := args.(string)
 	var mihomoProxies []map[string]any
 	data, err := getDateFromSubs(subUrl)
+	fmt.Println(err)
 	if err != nil {
 		return nil, err
 	}

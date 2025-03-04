@@ -56,7 +56,7 @@ mihomo-api-secret: ""
 sub-urls-retry: 3
 # Proxy settings, supports http and socks proxies
 proxy:
-  type: "http" # Options: http, socks
+  type: "" # Options: http, socks
   address: "http://192.168.31.11:7890" # Proxy address
 # Subscription URLs
 sub-urls:

@@ -133,29 +133,40 @@ func removeAllControlCharacters(data []byte) []byte {
 }
 
 func IsYaml(data []byte) bool {
-	var isYamlBuffer map[string]any
-	scanner := bufio.NewScanner(bytes.NewReader(data))
-	var lines []byte
-	lineCount := 0
-	for scanner.Scan() {
-		lines = append(lines, scanner.Bytes()...)
-		lines = append(lines, '\n')
-		lineCount++
-		if lineCount >= 100 {
-			break
-		}
-	}
-	err := yaml.Unmarshal(lines, &isYamlBuffer)
-	if err != nil {
-		removeAllControlCharacters(lines)
-		err = yaml.Unmarshal(lines, &isYamlBuffer)
-		if err != nil {
-			isYamlBuffer = nil
-			return false
-		}
-	}
-	isYamlBuffer = nil
-	return true
+    // 优先检查是否包含代理协议标识
+    reg, _ := regexp.Compile("(ssr|ss|vmess|trojan|vless|hysteria|hy2|hysteria2)://")
+    
+    // 尝试先进行base64解码以检查是否为base64编码的代理链接
+    decodedData := parser.DecodeBase64(string(data))
+    if reg.MatchString(decodedData) {
+        return false
+    }
+    
+    // 检查是否含有YAML特有的结构标识
+    if bytes.Contains(data, []byte("proxies:")) || 
+       bytes.Contains(data, []byte("Proxy:")) || 
+       bytes.Contains(data, []byte("proxy-groups:")) {
+        var yamlContent map[string]interface{}
+        err := yaml.Unmarshal(data, &yamlContent)
+        return err == nil
+    }
+    
+    // 进行保守的YAML解析测试
+    var yamlBuffer map[string]interface{}
+    err := yaml.Unmarshal(data, &yamlBuffer)
+    if err != nil {
+        // 清理后再尝试一次
+        cleanedData := removeAllControlCharacters(data)
+        err = yaml.Unmarshal(cleanedData, &yamlBuffer)
+        if err != nil {
+            return false
+        }
+        
+        // 即使解析成功，但如果map为空或只有极少数项，可能不是有效YAML
+        return len(yamlBuffer) > 2
+    }
+    
+    return len(yamlBuffer) > 0
 }
 func ParseYamlProxy(data []byte) ([]map[string]any, error) {
 	var inProxiesSection bool

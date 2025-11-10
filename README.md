@@ -173,6 +173,17 @@ bestsub/
 - 📝 改进文档
 - 🧪 编写测试用例
 
+## 🤝 贡献者
+
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore-start -->
+<!-- markdownlint-disable -->
+
+<!-- markdownlint-restore -->
+<!-- prettier-ignore-end -->
+
+<!-- ALL-CONTRIBUTORS-LIST:END -->
+
 ## ⚠️ 免责声明
 
 本项目仅供学习和研究使用。使用本软件时，请您：

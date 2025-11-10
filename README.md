@@ -1,4 +1,7 @@
 # BestSub
+<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
+[![All Contributors](https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat-square)](#contributors-)
+<!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 BestSub 是一个高性能的节点检测，订阅转换服务，基于 Go 语言开发。该项目提供了完整的 Web 界面和 API 接口，支持多种检测项目，多种订阅格式转换，为用户提供便捷的订阅管理解决方案。
 
@@ -178,6 +181,13 @@ bestsub/
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
 <!-- prettier-ignore-start -->
 <!-- markdownlint-disable -->
+<table>
+  <tbody>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://sgpublic.xyz/"><img src="https://avatars.githubusercontent.com/u/37202870?v=4?s=100" width="100px;" alt="Haven Madray"/><br /><sub><b>Haven Madray</b></sub></a><br /><a href="https://github.com/bestruirui/BestSub/commits?author=sgpublic" title="Code">💻</a></td>
+    </tr>
+  </tbody>
+</table>
 
 <!-- markdownlint-restore -->
 <!-- prettier-ignore-end -->
@@ -207,3 +217,16 @@ bestsub/
 ## 📊 项目统计
 
 ![Repobeats analytics image](https://repobeats.axiom.co/api/embed/dfefb13ae0ed117da68382c0ed63695992826039.svg "Repobeats analytics image")
+
+## Contributors ✨
+
+Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
+
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore-start -->
+<!-- markdownlint-disable -->
+<!-- markdownlint-restore -->
+<!-- prettier-ignore-end -->
+<!-- ALL-CONTRIBUTORS-LIST:END -->
+
+This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!

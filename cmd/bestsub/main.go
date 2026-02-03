@@ -9,7 +9,6 @@ import (
 	"github.com/bestruirui/bestsub/internal/database"
 	"github.com/bestruirui/bestsub/internal/database/op"
 	"github.com/bestruirui/bestsub/internal/models/setting"
-	"github.com/bestruirui/bestsub/internal/modules/subcer"
 	"github.com/bestruirui/bestsub/internal/server/auth"
 	"github.com/bestruirui/bestsub/internal/server/server"
 	"github.com/bestruirui/bestsub/internal/utils/info"
@@ -35,9 +34,6 @@ func main() {
 	}
 
 	update.InitUI()
-	update.InitSubconverter()
-
-	subcer.Start()
 
 	task.Init(op.GetSettingInt(setting.TASK_MAX_THREAD))
 
@@ -55,7 +51,6 @@ func main() {
 	shutdown.Register(database.Close)     //   ↓↓
 	shutdown.Register(auth.CloseSession)  //   ↓↓
 	shutdown.Register(node.CloseNodePool) //   ↓↓
-	shutdown.Register(subcer.Stop)        //   ↓↓
 	shutdown.Register(log.Close)          //   ↓↓
 
 	shutdown.Listen()

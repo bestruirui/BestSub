@@ -72,12 +72,6 @@ func latest(c *gin.Context) {
 func updateFunc(c *gin.Context) {
 	name := c.Param("name")
 	switch name {
-	case "subconverter":
-		err := update.UpdateSubconverter()
-		if err != nil {
-			resp.Error(c, http.StatusInternalServerError, err.Error())
-			return
-		}
 	case "webui":
 		err := update.UpdateUI()
 		if err != nil {

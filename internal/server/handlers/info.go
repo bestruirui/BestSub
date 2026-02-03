@@ -8,7 +8,6 @@ import (
 	sys "github.com/bestruirui/bestsub/internal/core/system"
 	"github.com/bestruirui/bestsub/internal/database/op"
 	"github.com/bestruirui/bestsub/internal/models/system"
-	"github.com/bestruirui/bestsub/internal/modules/subcer"
 	"github.com/bestruirui/bestsub/internal/server/middleware"
 	"github.com/bestruirui/bestsub/internal/server/resp"
 	"github.com/bestruirui/bestsub/internal/server/router"
@@ -170,11 +169,10 @@ func systemInfo(c *gin.Context) {
 // @Router /api/v1/system/version [get]
 func version(c *gin.Context) {
 	resp.Success(c, system.Version{
-		Version:             info.Version,
-		BuildTime:           info.BuildTime,
-		Commit:              info.Commit,
-		Author:              info.Author,
-		Repo:                info.Repo,
-		SubConverterVersion: subcer.GetVersion(),
+		Version:   info.Version,
+		BuildTime: info.BuildTime,
+		Commit:    info.Commit,
+		Author:    info.Author,
+		Repo:      info.Repo,
 	})
 }

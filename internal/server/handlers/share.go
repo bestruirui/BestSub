@@ -206,6 +206,10 @@ func getShareSubContent(c *gin.Context) {
 		resp.Error(c, http.StatusInternalServerError, "token is required")
 		return
 	}
+	target := c.Query("target")
+	if target == "" {
+		target = "mihomo"
+	}
 	shareData, err := op.GetShareByToken(c.Request.Context(), token)
 	if err != nil {
 		resp.Error(c, http.StatusInternalServerError, err.Error())
@@ -224,5 +228,5 @@ func getShareSubContent(c *gin.Context) {
 		return
 	}
 	op.UpdateShareAccessCount(c.Request.Context(), shareData.ID)
-	c.Data(http.StatusOK, "text/plain; charset=utf-8", share.GenSubData(shareData.Gen, c.GetHeader("User-Agent"), token, c.Request.URL.RawQuery))
+	c.Data(http.StatusOK, "text/plain; charset=utf-8", share.GenSubData(shareData.Gen, target))
 }

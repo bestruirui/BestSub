@@ -4,17 +4,15 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"fmt"
 	"io"
 	"net/http"
-	"net/url"
 	"slices"
 	"strings"
 	"time"
 
-	"github.com/bestruirui/bestsub/internal/config"
 	"github.com/bestruirui/bestsub/internal/core/mihomo"
 	"github.com/bestruirui/bestsub/internal/core/node"
+	"github.com/bestruirui/bestsub/internal/core/subconv"
 	"github.com/bestruirui/bestsub/internal/database/op"
 	nodeModel "github.com/bestruirui/bestsub/internal/models/node"
 	"github.com/bestruirui/bestsub/internal/models/setting"
@@ -35,19 +33,18 @@ func Do(ctx context.Context, subID uint16, config string) subModel.Result {
 
 	log.Debugf("fetch task %d started", subID)
 
-	client := mihomo.Default(false)
+	client := mihomo.Default(subConfig.Proxy)
 	if client == nil {
 		log.Warnf("fetch task %d failed: proxy config error", subID)
 		return createFailureResult("proxy config error", startTime)
 	}
 	defer client.Release()
-	subUrl := genSubConverterUrl(subConfig.Url, subConfig.Proxy)
 	for retry < 3 {
 		time.Sleep(time.Duration(retry) * time.Second)
 		retry++
 		client.Timeout = time.Duration(subConfig.Timeout) * time.Second
 
-		req, err := http.NewRequestWithContext(ctx, "GET", subUrl, nil)
+		req, err := http.NewRequestWithContext(ctx, "GET", subConfig.Url, nil)
 		if err != nil {
 			log.Warnf("fetch task %d failed: %v", subID, err)
 			continue
@@ -65,6 +62,8 @@ func Do(ctx context.Context, subID uint16, config string) subModel.Result {
 			log.Warnf("fetch task %d failed: %v", subID, err)
 			continue
 		}
+		contentStr := subconv.Convert(string(content), "mihomo")
+		content = []byte(contentStr)
 
 		globalProtocolFilterEnable := op.GetSettingBool(setting.NODE_PROTOCOL_FILTER_ENABLE)
 		globalProtocolFilterMode := op.GetSettingBool(setting.NODE_PROTOCOL_FILTER_MODE)
@@ -149,16 +148,4 @@ func createSuccessResult(count uint32, startTime time.Time, nodeNull bool) subMo
 		LastRun:       time.Now(),
 		Duration:      uint16(time.Since(startTime).Milliseconds()),
 	}
-}
-func genSubConverterUrl(subUrl string, enableProxy bool) string {
-	subUrl = url.QueryEscape(subUrl)
-	cfg := config.Base()
-	scHost := cfg.SubConverter.Host
-	scPort := cfg.SubConverter.Port
-	if enableProxy {
-		proxy := op.GetSettingStr(setting.PROXY_URL)
-		proxy = url.QueryEscape(proxy)
-		return fmt.Sprintf("http://%s:%d/sub?target=clash&list=true&url=%s&sub_proxy=%s", scHost, scPort, subUrl, proxy)
-	}
-	return fmt.Sprintf("http://%s:%d/sub?target=clash&list=true&url=%s", scHost, scPort, subUrl)
 }

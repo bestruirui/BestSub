@@ -20,7 +20,7 @@ type Data struct {
 type GenConfig struct {
 	Filter nodeModel.Filter `json:"filter"`
 	Rename string           `json:"rename"`
-	Proxy  bool             `json:"proxy"`
+	Target string           `json:"target"`
 }
 
 type Request struct {

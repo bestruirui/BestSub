@@ -16,7 +16,7 @@ import (
 	"github.com/bestruirui/bestsub/internal/utils/country"
 )
 
-func GenSubData(genConfigStr string, target string) []byte {
+func GenSubData(genConfigStr string) []byte {
 	var genConfig share.GenConfig
 	if err := json.Unmarshal([]byte(genConfigStr), &genConfig); err != nil {
 		return nil
@@ -49,7 +49,7 @@ func GenSubData(genConfigStr string, target string) []byte {
 		result.Write(rename(node.Base.Raw, newName.Bytes()))
 		result.Write(newLine)
 	}
-	resultStr := subconv.Convert(result.String(), target)
+	resultStr := subconv.Convert(result.String(), genConfig.Target)
 	return []byte(resultStr)
 }
 

@@ -1,7 +1,4 @@
 # BestSub
-<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat-square)](#contributors-)
-<!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 BestSub 是一个高性能的节点检测，订阅转换服务，基于 Go 语言开发。该项目提供了完整的 Web 界面和 API 接口，支持多种检测项目，多种订阅格式转换，为用户提供便捷的订阅管理解决方案。
 
@@ -12,7 +9,6 @@ BestSub 是一个高性能的节点检测，订阅转换服务，基于 Go 语�
 - 🎲 **分享**: 高度自定义的分享功能,自定义节点名称,过期时间,最大访问量,节点类型,国家....
 - 🌍 **多架构**: 支持多种系统架构和操作系统，广泛的兼容性
 - 🗂️ **节点池**: 可持久化保存历史节点，智能淘汰质量低下的节点，确保最佳体验
-- 🔄 **内置 Subconverter**: 支持各种订阅格式的输入输出转换
 - 🔧 **扩展**: 模块化设计，支持 PR 扩展新功能，仅需创建单个文件即可添加新的通知、保存或检测方式
 - 📢 **通知**: 支持多样化的通知方式和自定义通知模板，满足不同场景的消息推送需求
 - 💾 **保存**: 支持多样化的数据保存方式，灵活的数据持久化选择
@@ -25,8 +21,6 @@ BestSub 是一个高性能的节点检测，订阅转换服务，基于 Go 语�
 1. 从 [Releases](https://github.com/bestruirui/BestSub/releases/latest) 页面下载适合您系统架构的可执行文件
 2. 直接运行程序，系统将自动：
    - 创建必要的配置文件
-   - 下载 WebUI 
-   - 下载 Subconverter
 
 ### 方式二：Docker
 
@@ -83,22 +77,7 @@ bestsub/
 ├── log/                     # 日志文件目录
 ├── session/                 # 会话数据目录
 │   └── bestsub.session     # 会话文件
-└── ui/                     # Web 界面文件
-    ├── index.html         # 主页面
-    └── ...                # 其他静态资源
 ```
-
-## 🛠️ 手动部署
-
-当自动下载失败时，请按以下步骤手动部署：
-
-1. **下载 WebUI 组件**
-   - 访问 [bestruirui/BestSubFront](https://github.com/bestruirui/BestSubFront/releases/latest)
-   - 下载最新版本并解压到 `ui` 目录
-
-2. **验证部署**
-   - 确保目录结构与上述 [目录结构](#-目录结构) 章节一致
-   - 重新启动程序
 
 ## 🔗 版本历史
 
@@ -166,24 +145,6 @@ bestsub/
 - 📝 改进文档
 - 🧪 编写测试用例
 
-## 🤝 贡献者
-
-<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
-<!-- prettier-ignore-start -->
-<!-- markdownlint-disable -->
-<table>
-  <tbody>
-    <tr>
-      <td align="center" valign="top" width="14.28%"><a href="https://sgpublic.xyz/"><img src="https://avatars.githubusercontent.com/u/37202870?v=4?s=100" width="100px;" alt="Haven Madray"/><br /><sub><b>Haven Madray</b></sub></a><br /><a href="https://github.com/bestruirui/BestSub/commits?author=sgpublic" title="Code">💻</a></td>
-    </tr>
-  </tbody>
-</table>
-
-<!-- markdownlint-restore -->
-<!-- prettier-ignore-end -->
-
-<!-- ALL-CONTRIBUTORS-LIST:END -->
-
 ## ⚠️ 免责声明
 
 本项目仅供学习和研究使用。使用本软件时，请您：
@@ -207,16 +168,3 @@ bestsub/
 ## 📊 项目统计
 
 ![Repobeats analytics image](https://repobeats.axiom.co/api/embed/dfefb13ae0ed117da68382c0ed63695992826039.svg "Repobeats analytics image")
-
-## Contributors ✨
-
-Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
-
-<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
-<!-- prettier-ignore-start -->
-<!-- markdownlint-disable -->
-<!-- markdownlint-restore -->
-<!-- prettier-ignore-end -->
-<!-- ALL-CONTRIBUTORS-LIST:END -->
-
-This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!

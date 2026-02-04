@@ -5,7 +5,6 @@ import (
 	"github.com/bestruirui/bestsub/internal/core/cron"
 	"github.com/bestruirui/bestsub/internal/core/node"
 	"github.com/bestruirui/bestsub/internal/core/task"
-	"github.com/bestruirui/bestsub/internal/core/update"
 	"github.com/bestruirui/bestsub/internal/database"
 	"github.com/bestruirui/bestsub/internal/database/op"
 	"github.com/bestruirui/bestsub/internal/models/setting"
@@ -31,8 +30,6 @@ func main() {
 	if err := server.Initialize(); err != nil {
 		panic(err)
 	}
-
-	update.InitUI()
 
 	task.Init(op.GetSettingInt(setting.TASK_MAX_THREAD))
 

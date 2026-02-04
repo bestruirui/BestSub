@@ -35,20 +35,14 @@ func init() {
 // @Failure 500 {object} resp.ResponseStruct "服务器内部错误"
 // @Router /api/v1/update [get]
 func latest(c *gin.Context) {
-	latestInfo := make(map[string]update.LatestInfo, 3)
+	latestInfo := make(map[string]update.LatestInfo, 1)
 	bestsub, err := update.GetLatestBestsubInfo()
-	if err != nil {
-		resp.Error(c, http.StatusInternalServerError, err.Error())
-		return
-	}
-	ui, err := update.GetLatestUIInfo()
 	if err != nil {
 		resp.Error(c, http.StatusInternalServerError, err.Error())
 		return
 	}
 
 	latestInfo["bestsub"] = *bestsub
-	latestInfo["webui"] = *ui
 	resp.Success(c, latestInfo)
 }
 
@@ -66,12 +60,6 @@ func latest(c *gin.Context) {
 func updateFunc(c *gin.Context) {
 	name := c.Param("name")
 	switch name {
-	case "webui":
-		err := update.UpdateUI()
-		if err != nil {
-			resp.Error(c, http.StatusInternalServerError, err.Error())
-			return
-		}
 	case "bestsub":
 		err := update.UpdateCore()
 		if err != nil {

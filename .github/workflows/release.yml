@@ -28,7 +28,18 @@ jobs:
 
       - name: Setup Go
         uses: actions/setup-go@v5
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 'latest'
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 'latest'
+          cache: 'pnpm'
+          cache-dependency-path: web/pnpm-lock.yaml
+          
       - name: Build
         run: bash scripts/build.sh release
 

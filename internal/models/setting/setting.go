@@ -11,9 +11,6 @@ const (
 
 	LOG_RETENTION_DAYS = "log_retention_days"
 
-	FRONTEND_URL       = "frontend_url"
-	FRONTEND_URL_PROXY = "frontend_url_proxy"
-
 	SUBCONV_URL       = "subconv_url"
 	SUBCONV_URL_PROXY = "subconv_url_proxy"
 

@@ -46,6 +46,7 @@ import (
 	"github.com/bestruirui/bestsub/internal/server/middleware"
 	"github.com/bestruirui/bestsub/internal/server/router"
 	"github.com/bestruirui/bestsub/internal/utils/log"
+	"github.com/bestruirui/bestsub/static"
 	"github.com/gin-gonic/gin"
 )
 
@@ -129,7 +130,7 @@ func setRouter() (*gin.Engine, error) {
 	// r.Use(middleware.Logging())
 	r.Use(middleware.Recovery())
 	r.Use(middleware.Cors())
-	r.Use(middleware.Static())
+	r.Use(middleware.StaticEmbed("/", static.StaticFS))
 
 	if err := router.RegisterAll(r); err != nil {
 		return nil, fmt.Errorf("failed to register routes: %w", err)

@@ -1,0 +1,1 @@
+export { CheckPage } from './check-page'

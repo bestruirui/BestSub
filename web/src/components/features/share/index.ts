@@ -1,0 +1,1 @@
+export { SharePage } from './components/share-page'

@@ -21,8 +21,6 @@ import (
 const (
 	bestsubUpdateUrl    = "https://github.com/bestruirui/bestsub/releases/latest/download"
 	bestsubUpdateApiUrl = "https://api.github.com/repos/bestruirui/BestSub/releases/latest"
-	frontUpdateApiUrl   = "https://api.github.com/repos/bestruirui/BestSubFront/releases/latest"
-	subcerUpdateApiUrl  = "https://api.github.com/repos/bestruirui/subconverter/releases/latest"
 )
 
 type LatestInfo struct {
@@ -30,10 +28,6 @@ type LatestInfo struct {
 	PublishedAt string `json:"published_at"`
 	Body        string `json:"body"`
 	Message     string `json:"message"`
-}
-
-func GetLatestUIInfo() (*LatestInfo, error) {
-	return getLatestInfo(frontUpdateApiUrl, op.GetSettingBool(setting.FRONTEND_URL_PROXY))
 }
 
 func GetLatestBestsubInfo() (*LatestInfo, error) {

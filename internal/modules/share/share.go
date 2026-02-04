@@ -102,8 +102,8 @@ func rename(raw []byte, newName []byte) []byte {
 }
 
 var (
-	name        = []byte("{name: ")
-	serverDelim = []byte(", server:")
+	name        = []byte("{\"name\": ")
+	serverDelim = []byte(",\"server\":")
 
 	nodeData = []byte("proxies:\n")
 	newLine  = []byte("\n")

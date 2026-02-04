@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"net/http"
-	"strconv"
 	"time"
 
 	"github.com/bestruirui/bestsub/internal/config"
@@ -14,9 +13,7 @@ import (
 	"github.com/bestruirui/bestsub/internal/server/middleware"
 	"github.com/bestruirui/bestsub/internal/server/resp"
 	"github.com/bestruirui/bestsub/internal/server/router"
-	"github.com/bestruirui/bestsub/internal/utils"
 	"github.com/bestruirui/bestsub/internal/utils/log"
-	"github.com/cespare/xxhash/v2"
 	"github.com/gin-gonic/gin"
 )
 
@@ -26,10 +23,6 @@ func init() {
 		AddRoute(
 			router.NewRoute("/login", router.POST).
 				Handle(login),
-		).
-		AddRoute(
-			router.NewRoute("/refresh", router.POST).
-				Handle(refreshToken),
 		)
 
 	router.NewGroupRouter("/api/v1/auth").
@@ -49,14 +42,6 @@ func init() {
 		AddRoute(
 			router.NewRoute("/user", router.GET).
 				Handle(getUserInfo),
-		).
-		AddRoute(
-			router.NewRoute("/sessions", router.GET).
-				Handle(getSessions),
-		).
-		AddRoute(
-			router.NewRoute("/sessions/:id", router.DELETE).
-				Handle(deleteSession),
 		)
 }
 
@@ -93,24 +78,9 @@ func login(c *gin.Context) {
 		return
 	}
 
-	sessionID, tempSess := auth.GetOneSession()
-	if tempSess == nil {
-		log.Warnf("No unused session found from %s", c.ClientIP())
-		go notify.SendSystemNotify(notifyModel.TypeLoginFailed, "登录失败", authModel.LoginNotify{
-			Username:  req.Username,
-			IP:        c.ClientIP(),
-			Time:      time.Now().Format("2006-01-02 15:04:05"),
-			Msg:       "登录失败，没有找到空闲的会话",
-			UserAgent: c.GetHeader("User-Agent"),
-		})
-		resp.Error(c, http.StatusUnauthorized, "please logout other devices first")
-		return
-	}
-
-	tokenPair, err := auth.GenerateTokenPair(sessionID, req.Username, config.Base().JWT.Secret)
+	token, err := auth.GenerateToken(req.Username, config.Base().JWT.Secret)
 	if err != nil {
-		log.Errorf("Failed to generate token pair: %v from %s", err, c.ClientIP())
-		auth.DisableSession(sessionID)
+		log.Errorf("Failed to generate token: %v from %s", err, c.ClientIP())
 		go notify.SendSystemNotify(notifyModel.TypeLoginFailed, "登录失败", authModel.LoginNotify{
 			Username:  req.Username,
 			IP:        c.ClientIP(),
@@ -118,20 +88,10 @@ func login(c *gin.Context) {
 			Msg:       "登录失败，生成令牌失败",
 			UserAgent: c.GetHeader("User-Agent"),
 		})
-		resp.Error(c, http.StatusInternalServerError, "failed to generate token pair")
+		resp.Error(c, http.StatusInternalServerError, "failed to generate token")
 		return
 	}
 
-	now := uint32(time.Now().Unix())
-
-	tempSess.IsActive = true
-	tempSess.ClientIP = utils.IPToUint32(c.ClientIP())
-	tempSess.UserAgent = c.GetHeader("User-Agent")
-	tempSess.CreatedAt = now
-	tempSess.LastAccessAt = now
-	tempSess.ExpiresAt = uint32(tokenPair.RefreshExpiresAt.Unix())
-	tempSess.HashRToken = xxhash.Sum64String(tokenPair.RefreshToken)
-	tempSess.HashAToken = xxhash.Sum64String(tokenPair.AccessToken)
 	log.Infof("User %s logged in successfully from %s", req.Username, c.ClientIP())
 	go notify.SendSystemNotify(notifyModel.TypeLoginSuccess, "登录成功", authModel.LoginNotify{
 		Username:  req.Username,
@@ -141,89 +101,12 @@ func login(c *gin.Context) {
 		UserAgent: c.GetHeader("User-Agent"),
 	})
 
-	resp.Success(c, tokenPair)
-}
-
-// refreshToken 刷新令牌
-// @Summary 刷新访问令牌
-// @Description 使用刷新令牌获取新的访问令牌
-// @Tags 认证
-// @Accept json
-// @Produce json
-// @Param request body authModel.RefreshTokenRequest true "刷新令牌请求"
-// @Success 200 {object} resp.ResponseStruct{data=authModel.LoginResponse} "刷新成功"
-// @Failure 400 {object} resp.ResponseStruct "请求参数错误"
-// @Failure 401 {object} resp.ResponseStruct "刷新令牌无效"
-// @Failure 500 {object} resp.ResponseStruct "服务器内部错误"
-// @Router /api/v1/auth/refresh [post]
-func refreshToken(c *gin.Context) {
-	var req authModel.RefreshTokenRequest
-	if err := c.ShouldBindJSON(&req); err != nil {
-		resp.ErrorBadRequest(c)
-		return
-	}
-
-	claims, err := auth.ValidateToken(req.RefreshToken, config.Base().JWT.Secret)
-	if err != nil {
-		log.Warnf("Refresh token validation failed: %v", err)
-		resp.Error(c, http.StatusUnauthorized, "refresh token validation failed")
-		return
-	}
-
-	sess, err := auth.GetSession(claims.SessionID)
-	if err != nil {
-		log.Warnf("Failed to get session by ID: %v", err)
-		resp.Error(c, http.StatusUnauthorized, "session not found")
-		return
-	}
-
-	if !sess.IsActive {
-		log.Warnf("Session %d is not active", claims.SessionID)
-		resp.Error(c, http.StatusUnauthorized, "session is not active")
-		return
-	}
-
-	if sess.HashRToken != xxhash.Sum64String(req.RefreshToken) {
-		log.Warnf("Refresh token hash mismatch: session=%d, request=%d", sess.HashRToken, xxhash.Sum64String(req.RefreshToken))
-		resp.Error(c, http.StatusUnauthorized, "refresh token hash mismatch")
-		return
-	}
-
-	clientIP := utils.IPToUint32(c.ClientIP())
-
-	if sess.ClientIP != clientIP {
-		log.Warnf("Client IP mismatch during token refresh: session=%s, request=%s", utils.Uint32ToIP(sess.ClientIP), c.ClientIP())
-		resp.Error(c, http.StatusUnauthorized, "client IP mismatch")
-		return
-	}
-
-	if sess.UserAgent != c.GetHeader("User-Agent") {
-		log.Warnf("User agent mismatch during token refresh: session=%s, request=%s",
-			sess.UserAgent, c.GetHeader("User-Agent"))
-		resp.Error(c, http.StatusUnauthorized, "user agent mismatch")
-		return
-	}
-
-	newTokenPair, err := auth.GenerateTokenPair(claims.SessionID, claims.Username, config.Base().JWT.Secret)
-	if err != nil {
-		log.Errorf("Failed to generate new token pair: %v", err)
-		resp.Error(c, http.StatusInternalServerError, "failed to generate new token pair")
-		return
-	}
-
-	sess.ExpiresAt = uint32(newTokenPair.RefreshExpiresAt.Unix())
-	sess.LastAccessAt = uint32(time.Now().Unix())
-	sess.HashRToken = xxhash.Sum64String(newTokenPair.RefreshToken)
-	sess.HashAToken = xxhash.Sum64String(newTokenPair.AccessToken)
-
-	log.Infof("Token refreshed for session %d from %s", claims.SessionID, c.ClientIP())
-
-	resp.Success(c, newTokenPair)
+	resp.Success(c, token)
 }
 
 // logout 用户登出
 // @Summary 用户登出
-// @Description 用户登出接口，使当前会话失效
+// @Description 用户登出接口，客户端清除令牌
 // @Tags 认证
 // @Accept json
 // @Produce json
@@ -233,19 +116,6 @@ func refreshToken(c *gin.Context) {
 // @Failure 500 {object} resp.ResponseStruct "服务器内部错误"
 // @Router /api/v1/auth/logout [post]
 func logout(c *gin.Context) {
-	sessionID, exists := c.Get("session_id")
-	if !exists {
-		resp.Error(c, http.StatusUnauthorized, "session not found")
-		return
-	}
-
-	err := auth.DisableSession(sessionID.(uint8))
-	if err != nil {
-		log.Errorf("Failed to disable session: %v", err)
-		resp.Error(c, http.StatusInternalServerError, "failed to disable session")
-		return
-	}
-
 	log.Infof("User logged out successfully from %s", c.ClientIP())
 
 	resp.Success(c, nil)
@@ -285,8 +155,6 @@ func changePassword(c *gin.Context) {
 		return
 	}
 
-	auth.DisableAllSession()
-
 	log.Infof("Password changed successfully for user %s from %s", req.Username, c.ClientIP())
 
 	resp.Success(c, nil)
@@ -311,76 +179,6 @@ func getUserInfo(c *gin.Context) {
 		return
 	}
 	resp.Success(c, authInfo)
-}
-
-// getSessions 获取当前用户的所有会话
-// @Summary 获取用户会话列表
-// @Description 获取当前用户的所有活跃会话信息
-// @Tags 认证
-// @Accept json
-// @Produce json
-// @Security BearerAuth
-// @Success 200 {object} resp.ResponseStruct{data=authModel.SessionListResponse} "获取成功"
-// @Failure 401 {object} resp.ResponseStruct "未授权"
-// @Failure 500 {object} resp.ResponseStruct "服务器内部错误"
-// @Router /api/v1/auth/sessions [get]
-func getSessions(c *gin.Context) {
-	sessions := auth.GetAllSession()
-	response := authModel.SessionListResponse{
-		Sessions: *sessions,
-		Total:    uint8(len(*sessions)),
-	}
-	resp.Success(c, response)
-}
-
-// deleteSession 删除指定会话
-// @Summary 删除会话
-// @Description 删除指定ID的会话，使其失效
-// @Tags 认证
-// @Accept json
-// @Produce json
-// @Security BearerAuth
-// @Param id path int true "会话ID"
-// @Success 200 {object} resp.ResponseStruct "删除成功"
-// @Failure 400 {object} resp.ResponseStruct "请求参数错误"
-// @Failure 401 {object} resp.ResponseStruct "未授权"
-// @Failure 404 {object} resp.ResponseStruct "会话不存在"
-// @Failure 500 {object} resp.ResponseStruct "服务器内部错误"
-// @Router /api/v1/auth/sessions/{id} [delete]
-func deleteSession(c *gin.Context) {
-	sessionIDStr := c.Param("id")
-	if sessionIDStr == "" {
-		resp.ErrorBadRequest(c)
-		return
-	}
-
-	sessionID, err := strconv.ParseUint(sessionIDStr, 10, 8)
-	if err != nil {
-		resp.ErrorBadRequest(c)
-		return
-	}
-
-	_, err = auth.GetSession(uint8(sessionID))
-	if err != nil {
-		if err == auth.ErrSessionNotFound {
-			resp.Error(c, http.StatusNotFound, "session not found")
-		} else {
-			log.Errorf("Failed to get session: %v", err)
-			resp.Error(c, http.StatusInternalServerError, "failed to get session")
-		}
-		return
-	}
-
-	err = auth.DisableSession(uint8(sessionID))
-	if err != nil {
-		log.Errorf("Failed to disable session: %v", err)
-		resp.Error(c, http.StatusInternalServerError, "failed to disable session")
-		return
-	}
-
-	log.Infof("Session %d disabled by user from %s", sessionID, c.ClientIP())
-
-	resp.Success(c, nil)
 }
 
 // updateUsername 修改用户名

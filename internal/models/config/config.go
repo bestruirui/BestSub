@@ -30,6 +30,5 @@ type JWTConfig struct {
 }
 
 type SessionConfig struct {
-	AuthPath string `json:"-"`
 	NodePath string `json:"-"`
 }

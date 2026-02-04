@@ -9,7 +9,6 @@ import (
 	"github.com/bestruirui/bestsub/internal/database"
 	"github.com/bestruirui/bestsub/internal/database/op"
 	"github.com/bestruirui/bestsub/internal/models/setting"
-	"github.com/bestruirui/bestsub/internal/server/auth"
 	"github.com/bestruirui/bestsub/internal/server/server"
 	"github.com/bestruirui/bestsub/internal/utils/info"
 	"github.com/bestruirui/bestsub/internal/utils/log"
@@ -49,7 +48,6 @@ func main() {
 
 	shutdown.Register(server.Close)       //   ↓↓
 	shutdown.Register(database.Close)     //   ↓↓
-	shutdown.Register(auth.CloseSession)  //   ↓↓
 	shutdown.Register(node.CloseNodePool) //   ↓↓
 	shutdown.Register(log.Close)          //   ↓↓
 

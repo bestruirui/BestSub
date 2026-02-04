@@ -62,7 +62,7 @@ func Do(ctx context.Context, subID uint16, config string) subModel.Result {
 			log.Warnf("fetch task %d failed: %v", subID, err)
 			continue
 		}
-		contentStr := subconv.Convert(string(content), "mihomo")
+		contentStr := subconv.ConvertData(string(content), "mihomo")
 		content = []byte(contentStr)
 
 		globalProtocolFilterEnable := op.GetSettingBool(setting.NODE_PROTOCOL_FILTER_ENABLE)

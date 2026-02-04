@@ -46,15 +46,9 @@ func latest(c *gin.Context) {
 		resp.Error(c, http.StatusInternalServerError, err.Error())
 		return
 	}
-	subconverter, err := update.GetLatestSubconverterInfo()
-	if err != nil {
-		resp.Error(c, http.StatusInternalServerError, err.Error())
-		return
-	}
 
 	latestInfo["bestsub"] = *bestsub
 	latestInfo["webui"] = *ui
-	latestInfo["subconverter"] = *subconverter
 	resp.Success(c, latestInfo)
 }
 

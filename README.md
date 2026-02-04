@@ -83,12 +83,6 @@ bestsub/
 ├── log/                     # 日志文件目录
 ├── session/                 # 会话数据目录
 │   └── bestsub.session     # 会话文件
-├── subconverter/           # 订阅转换器目录
-│   ├── base/               # 转换规则基础配置
-│   │   └── base/
-│   │       └── all_base.tpl
-│   ├── pref.yml           # 转换器配置文件
-│   └── subconverter       # 转换器可执行文件
 └── ui/                     # Web 界面文件
     ├── index.html         # 主页面
     └── ...                # 其他静态资源
@@ -102,11 +96,7 @@ bestsub/
    - 访问 [bestruirui/BestSubFront](https://github.com/bestruirui/BestSubFront/releases/latest)
    - 下载最新版本并解压到 `ui` 目录
 
-2. **下载 Subconverter 组件**
-   - 访问 [bestruirui/subconverter](https://github.com/bestruirui/subconverter/releases/latest)
-   - 下载对应系统架构的版本并解压到 `subconverter` 目录
-
-3. **验证部署**
+2. **验证部署**
    - 确保目录结构与上述 [目录结构](#-目录结构) 章节一致
    - 重新启动程序
 

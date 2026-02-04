@@ -88,9 +88,6 @@ func setupPaths(config *config.Base, configPath string) {
 		config.Session.NodePath = filepath.Join(configDir, "session", "node.session")
 	}
 
-	if config.SubConverter.Path == "" {
-		config.SubConverter.Path = filepath.Join(configDir, "subconverter")
-	}
 }
 
 func loadFromFile(config *config.Base, filePath string) error {
@@ -160,8 +157,6 @@ func createDefaultConfig(filePath string) error {
 	bytes := make([]byte, 32)
 	rand.Read(bytes)
 	baseConfig.JWT.Secret = hex.EncodeToString(bytes)
-	baseConfig.SubConverter.Port = 25500
-	baseConfig.SubConverter.Host = "127.0.0.1"
 
 	data, err := json.MarshalIndent(baseConfig, "", "    ")
 	if err != nil {

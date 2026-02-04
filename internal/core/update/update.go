@@ -36,10 +36,6 @@ func GetLatestUIInfo() (*LatestInfo, error) {
 	return getLatestInfo(frontUpdateApiUrl, op.GetSettingBool(setting.FRONTEND_URL_PROXY))
 }
 
-func GetLatestSubconverterInfo() (*LatestInfo, error) {
-	return getLatestInfo(subcerUpdateApiUrl, op.GetSettingBool(setting.SUBCONVERTER_URL_PROXY))
-}
-
 func GetLatestBestsubInfo() (*LatestInfo, error) {
 	return getLatestInfo(bestsubUpdateApiUrl, op.GetSettingBool(setting.PROXY_ENABLE))
 }

@@ -647,8 +647,6 @@ main() {
         # Build for different platforms
         log_step "Building binaries"
 
-        curl -o internal/core/subconv/subconv.es5.js https://raw.githubusercontent.com/bestruirui/SubWorker/refs/heads/dist/subconv.es5.js
-
         # Android builds (requires CGO and NDK)
         # if ! build_android arm64; then
         #     log_error "Failed to build Android arm64"

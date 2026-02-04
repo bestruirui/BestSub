@@ -24,11 +24,11 @@ func DefaultSetting() []Setting {
 			Value: "false",
 		},
 		{
-			Key:   SUBCONVERTER_URL,
-			Value: "https://github.com/bestruirui/subconverter/releases/latest/download/",
+			Key:   SUBCONV_URL,
+			Value: "",
 		},
 		{
-			Key:   SUBCONVERTER_URL_PROXY,
+			Key:   SUBCONV_URL_PROXY,
 			Value: "false",
 		},
 		{

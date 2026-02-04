@@ -11,10 +11,11 @@ const (
 
 	LOG_RETENTION_DAYS = "log_retention_days"
 
-	FRONTEND_URL           = "frontend_url"
-	FRONTEND_URL_PROXY     = "frontend_url_proxy"
-	SUBCONVERTER_URL       = "subconverter_url"
-	SUBCONVERTER_URL_PROXY = "subconverter_url_proxy"
+	FRONTEND_URL       = "frontend_url"
+	FRONTEND_URL_PROXY = "frontend_url_proxy"
+
+	SUBCONV_URL       = "subconv_url"
+	SUBCONV_URL_PROXY = "subconv_url_proxy"
 
 	SUB_DISABLE_AUTO = "sub_disable_auto"
 

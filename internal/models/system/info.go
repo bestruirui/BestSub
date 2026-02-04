@@ -18,10 +18,9 @@ type Info struct {
 }
 
 type Version struct {
-	SubConverterVersion string `json:"subconverter_version"`
-	Version             string `json:"version"`
-	BuildTime           string `json:"build_time"`
-	Commit              string `json:"commit"`
-	Author              string `json:"author"`
-	Repo                string `json:"repo"`
+	Version   string `json:"version"`
+	BuildTime string `json:"build_time"`
+	Commit    string `json:"commit"`
+	Author    string `json:"author"`
+	Repo      string `json:"repo"`
 }

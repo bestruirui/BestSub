@@ -90,21 +90,19 @@ func GenNodeData(config string) []byte {
 }
 
 func rename(raw []byte, newName []byte) []byte {
-	idx := bytes.Index(raw, serverDelim)
-	if idx < 0 {
+	var node map[string]any
+	if err := json.Unmarshal(raw, &node); err != nil {
 		return raw
 	}
-	out := make([]byte, 0, len(name)+len(newName)+len(raw)-idx)
-	out = append(out, name...)
-	out = append(out, newName...)
-	out = append(out, raw[idx:]...)
+	node["name"] = string(newName)
+	out, err := json.Marshal(node)
+	if err != nil {
+		return raw
+	}
 	return out
 }
 
 var (
-	name        = []byte("{\"name\": ")
-	serverDelim = []byte(",\"server\":")
-
 	nodeData = []byte("proxies:\n")
 	newLine  = []byte("\n")
 	dash     = []byte(" - ")

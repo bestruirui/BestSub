@@ -2,6 +2,7 @@ export interface SubConfig {
     url: string
     proxy?: boolean
     timeout?: number
+    enable_format_conversion?: boolean
     protocol_filter_enable?: boolean
     protocol_filter_mode?: boolean
     protocol_filter?: string[]

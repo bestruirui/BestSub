@@ -72,6 +72,19 @@ export function ConfigSection({ control }: { control: Control<SubRequest> }) {
                     )}
                 />
 
+                <Label htmlFor="enable_format_conversion">启用格式转换</Label>
+                <Controller
+                    name="config.enable_format_conversion"
+                    control={control}
+                    render={({ field }) => (
+                        <Switch
+                            id="enable_format_conversion"
+                            checked={field.value || false}
+                            onCheckedChange={field.onChange}
+                        />
+                    )}
+                />
+
                 <Label htmlFor="enable">启用订阅</Label>
                 <Controller
                     name="enable"

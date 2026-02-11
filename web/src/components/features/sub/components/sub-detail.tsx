@@ -59,6 +59,9 @@ export function SubDetail({
                             <div className="text-muted-foreground"><span>订阅链接:</span> {subscription.config.url}</div>
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="text-muted-foreground"><span>使用代理:</span> {subscription.config.proxy ? '是' : '否'}</div>
+                                <div className="text-muted-foreground"><span>启用格式转换:</span> {subscription.config.enable_format_conversion ? '是' : '否'}</div>
+                            </div>
+                            <div className="grid grid-cols-2 gap-4">
                                 <div className="text-muted-foreground"><span>超时时间:</span> {subscription.config.timeout || 10}秒</div>
                             </div>
                         </div>

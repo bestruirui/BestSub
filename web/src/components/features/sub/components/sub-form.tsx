@@ -35,6 +35,7 @@ export function SubForm({
             url: '',
             proxy: false,
             timeout: 10,
+            enable_format_conversion: false,
             protocol_filter_enable: false,
             protocol_filter_mode: false,
             protocol_filter: [],

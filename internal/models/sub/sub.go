@@ -20,12 +20,13 @@ type Data struct {
 }
 
 type Config struct {
-	Url                  string   `json:"url"`
-	Proxy                bool     `json:"proxy"`
-	Timeout              int      `json:"timeout"`
-	ProtocolFilterEnable bool     `json:"protocol_filter_enable"`
-	ProtocolFilterMode   bool     `json:"protocol_filter_mode"`
-	ProtocolFilter       []string `json:"protocol_filter"`
+	Url                    string   `json:"url"`
+	Proxy                  bool     `json:"proxy"`
+	Timeout                int      `json:"timeout"`
+	EnableFormatConversion bool     `json:"enable_format_conversion"`
+	ProtocolFilterEnable   bool     `json:"protocol_filter_enable"`
+	ProtocolFilterMode     bool     `json:"protocol_filter_mode"`
+	ProtocolFilter         []string `json:"protocol_filter"`
 }
 
 type Result struct {

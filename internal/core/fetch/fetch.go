@@ -62,8 +62,12 @@ func Do(ctx context.Context, subID uint16, config string) subModel.Result {
 			log.Warnf("fetch task %d failed: %v", subID, err)
 			continue
 		}
-		contentStr := subconv.ConvertData(string(content), "mihomo")
-		content = []byte(contentStr)
+
+		if subConfig.EnableFormatConversion {
+			log.Debugf("fetch task %d: starting format conversion", subID)
+			contentStr := subconv.ConvertData(string(content), "mihomo")
+			content = []byte(contentStr)
+		}
 
 		globalProtocolFilterEnable := op.GetSettingBool(setting.NODE_PROTOCOL_FILTER_ENABLE)
 		globalProtocolFilterMode := op.GetSettingBool(setting.NODE_PROTOCOL_FILTER_MODE)

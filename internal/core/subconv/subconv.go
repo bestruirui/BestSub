@@ -42,6 +42,7 @@ func ConvertData(raw string, target string) string {
 		log.Warnf("failed to create request: %v", err)
 		return ""
 	}
+	req.Header.Set("Content-Type", "application/json")
 	resp, err := client.Do(req)
 	if err != nil {
 		log.Warnf("failed to do request: %v", err)

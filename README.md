@@ -58,6 +58,15 @@ services:
       - "8080:8080"
     volumes:
       - ./data:/app/data
+  minisubconvert:
+    image: ghcr.io/bestruirui/minisubconvert:latest
+    container_name: minisubconvert
+    restart: unless-stopped
+    environment:
+      - PUID=1000
+      - PGID=1000
+    ports:
+      - "3000:3000"
 ```
 
 启动服务：

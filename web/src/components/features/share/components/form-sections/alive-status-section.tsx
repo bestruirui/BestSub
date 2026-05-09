@@ -7,12 +7,14 @@ interface AliveStatusSectionProps {
     fieldName: string
 }
 
-// 根据 bestsub/internal/models/node/node.go 中的常量定义
+// 根据 bestsub/internal/models/node/node.go 中的常量定义。
+// 这里只展示对用户有意义的可筛选状态，不暴露内部用的 ResidentialChecked。
 const ALIVE_STATUS_FLAGS = [
     { value: 1, label: '存活', name: 'Alive' },           // 1 << 0
     { value: 2, label: '国家', name: 'Country' },         // 1 << 1
     { value: 4, label: 'TikTok', name: 'TikTok' },             // 1 << 2
     { value: 8, label: 'TikTok IDC', name: 'TikTok IDC' },     // 1 << 3
+    { value: 16, label: '家宽', name: 'Residential' },         // 1 << 4
 ] as const
 
 export function AliveStatusSection({ control, fieldName }: AliveStatusSectionProps) {

@@ -8,10 +8,14 @@ import (
 )
 
 const (
-	Alive     uint64 = 1 << 0
-	Country   uint64 = 1 << 1
-	TikTok    uint64 = 1 << 2
-	TikTokIDC uint64 = 1 << 3
+	Alive              uint64 = 1 << 0
+	Country            uint64 = 1 << 1
+	TikTok             uint64 = 1 << 2
+	TikTokIDC          uint64 = 1 << 3
+	// Residential 表示节点已明确判定为家宽。
+	Residential        uint64 = 1 << 4
+	// ResidentialChecked 表示节点已经完成家宽判定，无论结果是否为家宽。
+	ResidentialChecked uint64 = 1 << 5
 )
 
 type Data struct {
@@ -71,6 +75,25 @@ func (i *Info) SetAliveStatus(AliveStatus uint64, status bool) {
 	} else {
 		i.AliveStatus &= ^AliveStatus
 	}
+}
+
+func (i *Info) HasAliveStatus(status uint64) bool {
+	return i.AliveStatus&status == status
+}
+
+// IsResidentialChecked 用于区分“未检测”和“已检测非家宽”。
+func (i *Info) IsResidentialChecked() bool {
+	return i.HasAliveStatus(ResidentialChecked)
+}
+
+func (i *Info) IsResidential() bool {
+	return i.HasAliveStatus(Residential)
+}
+
+// SetResidentialStatus 在写入家宽结果时同步补上已检测标记，避免出现非法状态组合。
+func (i *Info) SetResidentialStatus(residential bool) {
+	i.SetAliveStatus(Residential, residential)
+	i.SetAliveStatus(ResidentialChecked, true)
 }
 
 func (u *UniqueKey) Gen() uint64 {

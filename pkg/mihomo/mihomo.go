@@ -111,17 +111,6 @@ func NewTransport(outer, inner []byte, interfaceName string) (*http.Transport, f
 func createAdapter(mapping map[string]any, chainDialer ...constant.Dialer) (outbound.ProxyAdapter, error) {
 	proxyType, _ := mapping["type"].(string)
 
-	// vmess/vless 的 h2 传输会调用 metacubex/http 的 Transport.NewClientConn，
-	// 它注册的 context AfterFunc 读取命名返回值 pconn，与函数自身的错误返回竞争：
-	// h2 握手期间拨号 context 被取消(探测超时)就会读到 nil 并让整个进程 panic
-	// (metacubex/http transport.go:1954，v0.1.6/v0.1.7 均未修复)。
-	// 上游修复前直接拒绝这类节点，避免一次探测超时带崩进程。
-	if proxyType == "vmess" || proxyType == "vless" {
-		if network, _ := mapping["network"].(string); network == "h2" {
-			return nil, fmt.Errorf("unsupported proxy network: %s over h2", proxyType)
-		}
-	}
-
 	// 链式代理 dialer，设到 option.DialerForAPI 后构造函数会自动使用
 	var dialer constant.Dialer
 	if len(chainDialer) > 0 {
